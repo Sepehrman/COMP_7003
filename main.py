@@ -9,14 +9,15 @@ def define_arguments():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--count', help='The maximum number of packets to capture on the network. '
-                                   'Defaults to 5 if not defined', default=5)
-    parser.add_argument('-f', "--filter", help='Defines the filter we would like to employ onto the packet capturing '
-                                               'process. By default, it is set to `tcp`.\n'
+                                   'Defaults to 5 if not defined', type=int, default=5)
+    parser.add_argument('-f', "--filter", type=str,  help='Defines the filter we would like to employ onto the packet capturing '
+                                               'process. By default, it is set to `tcp` for HTTP traffic.\n'
                                                'An example filter can be: `tcp and port 80`', default='tcp')
-    parser.add_argument('-t', "--type", help='Used to monitor a specific network interface. Can be either of '
+    parser.add_argument('-t', "--type", type=str, help='Used to monitor a specific network interface. Can be either of '
                                              'Ethernet or Wi-Fi.\n'
                                              'The naming for Ethernet may vary based on your Operating System --> \n'
-                                             'Windows: `Ethernet` macOS: `en0`\nLinux: `eth0`, `eth1`', default='')
+                                             'Windows: `Ethernet` macOS: `en0`\nLinux: `eth0`, `eth1`. '
+                                             'Defaults to Wi-Fi', default='Wi-Fi')
     args = parser.parse_args()
     return args
 
@@ -163,7 +164,7 @@ def packet_callback(packet):
 # Capture packets on a specified interface using a custom filter
 def capture_packets(interface, capture_filter, packet_count):
     print(f"Packet capture on {interface} with filter: {capture_filter} ")
-    sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count)
+    sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count, timeout=10)
 
 
 def main():
