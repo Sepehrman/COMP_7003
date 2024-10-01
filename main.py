@@ -12,11 +12,11 @@ def define_arguments():
                                    'Defaults to 5 if not defined', type=int, default=5)
     parser.add_argument('-f', "--filter", type=str,  help='Defines the filter we would like to employ onto the packet '
                                                           'capturing process. By default, it is set to `tcp` for HTTP '
-                                                          'traffic. An example filter can be: `tcp and port 80`', default='tcp')
-    parser.add_argument('-to', "--timeout", type=int, help='Timeout (seconds) for the duration the packet capturing process '
+                                                          'traffic. An example filter can be: `tcp and/or port 80`', default='tcp')
+    parser.add_argument('-t', "--timeout", type=int, help='Timeout (seconds) for the duration the packet capturing process '
                                                        'will continue before automatically stopping. Defaults to 10.'
                         , default=10)
-    parser.add_argument('-t', "--type", type=str, help='Used to monitor a specific network interface. Can be either of '
+    parser.add_argument('-i', "--interface", type=str, help='Used to monitor a specific network interface. Can be either of '
                                              'Ethernet or Wi-Fi.\n'
                                              'The naming for Ethernet may vary based on your Operating System --> \n'
                                              'Windows: `Ethernet`; macOS: `en0`; Linux: `eth0`, `eth1`. '
@@ -174,10 +174,10 @@ def main():
     args = define_arguments()
 
     try:
-        capture_packets(args.type, args.filter, args.count, args.timeout)
+        capture_packets(args.interface, args.filter, args.count, args.timeout)
     except Exception as e:
         print(f"Error: {e}")
-        capture_packets('et0', args.filter, args.count)
+        # capture_packets('et0', args.filter, args.count)
 
 
 if __name__ == '__main__':
