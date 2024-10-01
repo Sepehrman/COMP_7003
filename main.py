@@ -62,8 +62,8 @@ def parse_arp_packet(hex_data):
     dst_mac_readable = ':'.join(dst_mac[i:i + 2] for i in range(0, 12, 2))
     dst_ip_readable = '.'.join(str(int(dst_ip[i:i + 2], 16)) for i in range(0, 8, 2))
 
-    print(f"ARP Packet:")
-    print(f"  Hardware Type: {hw_type} (Dec: {int(hw_type, 16)})\n"
+    print(f"ARP Packet:\n"
+          f"  Hardware Type: {hw_type} (Dec: {int(hw_type, 16)})\n"
           f"  Protocol Type: {proto_type} (Dec: {int(proto_type, 16)})\n"
           f"  Hardware Size: {hw_size} (Dec: {int(hw_size, 16)})\n"
           f"  Protocol Size: {proto_size} (Dec: {int(proto_size, 16)})\n"
