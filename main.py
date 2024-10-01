@@ -1,4 +1,24 @@
+import argparse
+
 from scapy.all import sniff
+
+def define_arguments():
+    """
+    Processes the user-defined filter (BFT Filters).
+    :return: an ArgumentParser object, containing a field of user arguments that were passed in.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', '--count', help='The maximum number of packets to capture on the network. '
+                                   'Defaults to 5 if not defined', default=5)
+    parser.add_argument('-f', "--filter", help='Defines the filter we would like to employ onto the packet capturing '
+                                               'process. By default, it is set to `tcp`.\n'
+                                               'An example filter can be: `tcp and port 80`', default='tcp')
+    parser.add_argument('-t', "--type", help='Used to monitor a specific network interface. Can be either of '
+                                             'Ethernet or Wi-Fi.\n'
+                                             'The naming for Ethernet may vary based on your Operating System --> \n'
+                                             'Windows: `Ethernet` macOS: `en0`\nLinux: `eth0`, `eth1`', default='')
+    args = parser.parse_args()
+    return args
 
 
 # Function to parse the Ethernet header
@@ -129,7 +149,6 @@ def packet_callback(packet):
     # Process the Ethernet header
     print(f"\nCaptured Packet (Hex): {hex_data}")
     ether_type = parse_ethernet_header(hex_data)
-
     if ether_type == '0806':  # ARP
         parse_arp_packet(hex_data)
     elif ether_type == '0800':  # IPv4
@@ -143,15 +162,19 @@ def packet_callback(packet):
 
 # Capture packets on a specified interface using a custom filter
 def capture_packets(interface, capture_filter, packet_count):
+    print(f"Packet capture on {interface} with filter: {capture_filter} ")
     sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count)
 
 
 def main():
+    args = define_arguments()
+
+    print(args)
     try:
-        capture_packets('en0', 'tcp', 5)
+        capture_packets(args.type, args.filter, args.count)
     except Exception as e:
         print(f"{e}. Retrying with Wifi")
-        capture_packets('Wi-Fi', 'tcp', 5)
+        capture_packets('Wi-Fi', args.filter, args.count)
 
 
 if __name__ == '__main__':
