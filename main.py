@@ -8,15 +8,18 @@ def define_arguments():
     :return: an ArgumentParser object, containing a field of user arguments that were passed in.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--count', help='The maximum number of packets to capture on the network. '
+    parser.add_argument('-c', '--count', help='The maximum number of packets to capture on the network. '
                                    'Defaults to 5 if not defined', type=int, default=5)
-    parser.add_argument('-f', "--filter", type=str,  help='Defines the filter we would like to employ onto the packet capturing '
-                                               'process. By default, it is set to `tcp` for HTTP traffic.\n'
-                                               'An example filter can be: `tcp and port 80`', default='tcp')
+    parser.add_argument('-f', "--filter", type=str,  help='Defines the filter we would like to employ onto the packet '
+                                                          'capturing process. By default, it is set to `tcp` for HTTP '
+                                                          'traffic. An example filter can be: `tcp and port 80`', default='tcp')
+    parser.add_argument('-to', "--timeout", type=int, help='Timeout (seconds) for the duration the packet capturing process '
+                                                       'will continue before automatically stopping. Defaults to 10.'
+                        , default=10)
     parser.add_argument('-t', "--type", type=str, help='Used to monitor a specific network interface. Can be either of '
                                              'Ethernet or Wi-Fi.\n'
                                              'The naming for Ethernet may vary based on your Operating System --> \n'
-                                             'Windows: `Ethernet` macOS: `en0`\nLinux: `eth0`, `eth1`. '
+                                             'Windows: `Ethernet`; macOS: `en0`; Linux: `eth0`, `eth1`. '
                                              'Defaults to Wi-Fi', default='Wi-Fi')
     args = parser.parse_args()
     return args
@@ -33,10 +36,10 @@ def parse_ethernet_header(hex_data):
     dest_mac_readable = ':'.join(dest_mac[i:i + 2] for i in range(0, 12, 2))
     source_mac_readable = ':'.join(source_mac[i:i + 2] for i in range(0, 12, 2))
 
-    print(f"Ethernet Header:")
-    print(f"  Destination MAC: {dest_mac_readable}")
-    print(f"  Source MAC: {source_mac_readable}")
-    print(f"  EtherType: {ether_type}")
+    print(f"Ethernet Header:\n"
+          f"  Destination MAC: {dest_mac_readable}\n"
+          f"  Source MAC: {source_mac_readable}\n"
+          f"  EtherType: {ether_type}")
     return ether_type
 
 
@@ -60,15 +63,15 @@ def parse_arp_packet(hex_data):
     dst_ip_readable = '.'.join(str(int(dst_ip[i:i + 2], 16)) for i in range(0, 8, 2))
 
     print(f"ARP Packet:")
-    print(f"  Hardware Type: {hw_type} (Dec: {int(hw_type, 16)})")
-    print(f"  Protocol Type: {proto_type} (Dec: {int(proto_type, 16)})")
-    print(f"  Hardware Size: {hw_size} (Dec: {int(hw_size, 16)})")
-    print(f"  Protocol Size: {proto_size} (Dec: {int(proto_size, 16)})")
-    print(f"  Opcode: {opcode} (Dec: {int(opcode, 16)})")
-    print(f"  Sender MAC: {src_mac_readable}")
-    print(f"  Sender IP: {src_ip_readable}")
-    print(f"  Target MAC: {dst_mac_readable}")
-    print(f"  Target IP: {dst_ip_readable}")
+    print(f"  Hardware Type: {hw_type} (Dec: {int(hw_type, 16)})\n"
+          f"  Protocol Type: {proto_type} (Dec: {int(proto_type, 16)})\n"
+          f"  Hardware Size: {hw_size} (Dec: {int(hw_size, 16)})\n"
+          f"  Protocol Size: {proto_size} (Dec: {int(proto_size, 16)})\n"
+          f"  Opcode: {opcode} (Dec: {int(opcode, 16)})\n"
+          f"  Sender MAC: {src_mac_readable}\n"
+          f"  Sender IP: {src_ip_readable}\n"
+          f"  Target MAC: {dst_mac_readable}\n"
+          f"  Target IP: {dst_ip_readable}")
 
 
 # Function to parse IPv4 packet
@@ -86,21 +89,21 @@ def parse_ipv4_packet(hex_data):
     src_ip = hex_data[52:60]
     dst_ip = hex_data[60:68]
 
-    src_ip_readable = '.'.join(str(int(src_ip[i:i + 2], 16)) for i in range(0, 8, 2))
-    dst_ip_readable = '.'.join(str(int(dst_ip[i:i + 2], 16)) for i in range(0, 8, 2))
+    src_ip = '.'.join(str(int(src_ip[i:i + 2], 16)) for i in range(0, 8, 2))
+    dst_ip = '.'.join(str(int(dst_ip[i:i + 2], 16)) for i in range(0, 8, 2))
 
-    print(f"IPv4 Packet:")
-    print(f"  Version: {version} (Dec: {int(version, 16)})")
-    print(f"  IHL: {ihl} (Dec: {int(ihl, 16)} * 4 bytes)")
-    print(f"  TOS: {tos} (Dec: {int(tos, 16)})")
-    print(f"  Total Length: {total_length} (Dec: {int(total_length, 16)})")
-    print(f"  Identification: {identification} (Dec: {int(identification, 16)})")
-    print(f"  Flags and Offset: {flags_offset} (Dec: {int(flags_offset, 16)})")
-    print(f"  TTL: {ttl} (Dec: {int(ttl, 16)})")
-    print(f"  Protocol: {protocol} (Dec: {int(protocol, 16)})")
-    print(f"  Header Checksum: {checksum} (Dec: {int(checksum, 16)})")
-    print(f"  Source IP: {src_ip_readable}")
-    print(f"  Destination IP: {dst_ip_readable}")
+    print(f"IPv4 Packet:\n"
+          f"  Version: {version} (Dec: {int(version, 16)})\n"
+          f"  IHL: {ihl} (Dec: {int(ihl, 16)} * 4 bytes)\n"
+          f"  TOS: {tos} (Dec: {int(tos, 16)})\n"
+          f"  Total Length: {total_length} (Dec: {int(total_length, 16)})\n"
+          f"  Identification: {identification} (Dec: {int(identification, 16)})\n"
+          f"  Flags and Offset: {flags_offset} (Dec: {int(flags_offset, 16)})\n"
+          f"  TTL: {ttl} (Dec: {int(ttl, 16)})\n"
+          f"  Protocol: {protocol} (Dec: {int(protocol, 16)})\n"
+          f"  Header Checksum: {checksum} (Dec: {int(checksum, 16)})\n"
+          f"  Source IP: {src_ip}\n"
+          f"  Destination IP: {dst_ip}")
 
 
 # Function to parse TCP packet
@@ -115,16 +118,16 @@ def parse_tcp_packet(hex_data):
     checksum = hex_data[100:104]
     urg_pointer = hex_data[104:108]
 
-    print(f"TCP Packet:")
-    print(f"  Source Port: {src_port} (Dec: {int(src_port, 16)})")
-    print(f"  Destination Port: {dst_port} (Dec: {int(dst_port, 16)})")
-    print(f"  Sequence Number: {seq_num} (Dec: {int(seq_num, 16)})")
-    print(f"  Acknowledgment Number: {ack_num} (Dec: {int(ack_num, 16)})")
-    print(f"  Data Offset: {data_offset} (Dec: {int(data_offset, 16)})")
-    print(f"  Flags: {flags} (Bin: {bin(int(flags, 16))[2:].zfill(8)})")
-    print(f"  Window Size: {window_size} (Dec: {int(window_size, 16)})")
-    print(f"  Checksum: {checksum} (Dec: {int(checksum, 16)})")
-    print(f"  Urgent Pointer: {urg_pointer} (Dec: {int(urg_pointer, 16)})")
+    print(f"TCP Packet:\n"
+          f"  Source Port: {src_port} (Dec: {int(src_port, 16)})\n"
+          f"  Destination Port: {dst_port} (Dec: {int(dst_port, 16)})\n"
+          f"  Sequence Number: {seq_num} (Dec: {int(seq_num, 16)})\n"
+          f"  Acknowledgment Number: {ack_num} (Dec: {int(ack_num, 16)})\n"
+          f"  Data Offset: {data_offset} (Dec: {int(data_offset, 16)})\n"
+          f"  Flags: {flags} (Bin: {bin(int(flags, 16))[2:].zfill(8)})\n"
+          f"  Window Size: {window_size} (Dec: {int(window_size, 16)})\n"
+          f"  Checksum: {checksum} (Dec: {int(checksum, 16)})\n"
+          f"  Urgent Pointer: {urg_pointer} (Dec: {int(urg_pointer, 16)})")
 
 
 # Function to parse UDP packet
@@ -134,11 +137,11 @@ def parse_udp_packet(hex_data):
     length = hex_data[76:80]
     checksum = hex_data[80:84]
 
-    print(f"UDP Packet:")
-    print(f"  Source Port: {src_port} (Dec: {int(src_port, 16)})")
-    print(f"  Destination Port: {dst_port} (Dec: {int(dst_port, 16)})")
-    print(f"  Length: {length} (Dec: {int(length, 16)})")
-    print(f"  Checksum: {checksum} (Dec: {int(checksum, 16)})")
+    print(f"UDP Packet:\n"
+          f"  Source Port: {src_port} (Dec: {int(src_port, 16)})\n"
+          f"  Destination Port: {dst_port} (Dec: {int(dst_port, 16)})\n"
+          f"  Length: {length} (Dec: {int(length, 16)})\n"
+          f"  Checksum: {checksum} (Dec: {int(checksum, 16)})")
 
 
 # Function to handle each captured packet
@@ -162,20 +165,19 @@ def packet_callback(packet):
 
 
 # Capture packets on a specified interface using a custom filter
-def capture_packets(interface, capture_filter, packet_count):
+def capture_packets(interface, capture_filter, packet_count, timeout):
     print(f"Packet capture on {interface} with filter: {capture_filter} ")
-    sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count, timeout=10)
+    sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count, timeout=timeout)
 
 
 def main():
     args = define_arguments()
 
-    print(args)
     try:
-        capture_packets(args.type, args.filter, args.count)
+        capture_packets(args.type, args.filter, args.count, args.timeout)
     except Exception as e:
-        print(f"{e}. Retrying with Wifi")
-        capture_packets('Wi-Fi', args.filter, args.count)
+        print(f"Error: {e}")
+        capture_packets('et0', args.filter, args.count)
 
 
 if __name__ == '__main__':
