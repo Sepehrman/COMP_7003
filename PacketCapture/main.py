@@ -106,6 +106,30 @@ def parse_ipv4_packet(hex_data):
           f"  Source IP: {src_ip}\n"
           f"  Destination IP: {dst_ip}")
 
+def parse_ipv6_packet(hex_data):
+    version_traffic_class = hex_data[28:30]
+    version = version_traffic_class[0]
+    traffic_class = version_traffic_class[1:2]
+    flow_label = hex_data[30:36]
+    payload_length = hex_data[36:40]
+    next_header = hex_data[40:42]
+    hop_limit = hex_data[42:44]
+    src_ip = hex_data[44:76]
+    dst_ip = hex_data[76:108]
+
+    src_ip = ':'.join(src_ip[i:i + 4] for i in range(0, 32, 4))
+    dst_ip = ':'.join(dst_ip[i:i + 4] for i in range(0, 32, 4))
+
+    print(f"IPv6 Packet:\n"
+          f"  Version: {version} (Dec: {int(version, 16)})\n"
+          f"  Traffic Class: {traffic_class} (Dec: {int(traffic_class, 16)})\n"
+          f"  Flow Label: {flow_label} (Dec: {int(flow_label, 16)})\n"
+          f"  Payload Length: {payload_length} (Dec: {int(payload_length, 16)})\n"
+          f"  Next Header: {next_header} (Dec: {int(next_header, 16)})\n"
+          f"  Hop Limit: {hop_limit} (Dec: {int(hop_limit, 16)})\n"
+          f"  Source IP: {src_ip}\n"
+          f"  Destination IP: {dst_ip}")
+
 
 # Function to parse TCP packet
 def parse_tcp_packet(hex_data):
@@ -161,7 +185,14 @@ def packet_callback(packet):
         protocol = hex_data[46:48]
         if protocol == '06':  # TCP
             parse_tcp_packet(hex_data)
-        elif protocol == '17':  # UDP
+        elif protocol == '11':  # UDP
+            parse_udp_packet(hex_data)
+    elif ether_type.lower() == '86dd':  # IPv6
+        parse_ipv6_packet(hex_data)
+        next_header = hex_data[40:42]
+        if next_header == '06':  # TCP
+            parse_tcp_packet(hex_data)
+        elif next_header == '11':  # UDP
             parse_udp_packet(hex_data)
 
 
