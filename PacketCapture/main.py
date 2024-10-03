@@ -2,6 +2,7 @@ import argparse
 
 from scapy.all import sniff
 
+
 def define_arguments():
     """
     Processes the user-defined filter (BFT Filters).
@@ -11,13 +12,13 @@ def define_arguments():
     parser.add_argument('-c', '--count', help='The maximum number of packets to capture on the network. '
                                    'Defaults to 5 if not defined', type=int, default=5)
     parser.add_argument('-f', "--filter", type=str,  help='Defines the filter we would like to employ onto the packet '
-                                                          'capturing process. By default, it is set to `tcp` for HTTP '
-                                                          'traffic. An example filter can be: `tcp and/or port 80`', default='tcp')
+                                                          'capturing process. By default, it will accept any '
+                                                          'incoming traffic.', default='')
     parser.add_argument('-t', "--timeout", type=int, help='Timeout (seconds) for the duration the packet capturing process '
                                                        'will continue before automatically stopping. Defaults to 10.'
-                        , default=10)
-    parser.add_argument('-i', "--interface", type=str, help='Used to monitor a specific network interface. Can be either of '
-                                             'Ethernet or Wi-Fi.\n'
+                                                                                                        , default=10)
+    parser.add_argument('-i', "--interface", type=str, help='Used to monitor a specific network interface. Can be either'
+                                                            ' of Ethernet or Wi-Fi.\n'
                                              'The naming for Ethernet may vary based on your Operating System --> \n'
                                              'Windows: `Ethernet`; macOS: `en0`; Linux: `eth0`, `eth1`. '
                                              'Defaults to Wi-Fi', default='Wi-Fi')
