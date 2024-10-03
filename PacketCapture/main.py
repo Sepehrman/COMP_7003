@@ -161,7 +161,7 @@ def packet_callback(packet):
         protocol = hex_data[46:48]
         if protocol == '06':  # TCP
             parse_tcp_packet(hex_data)
-        elif protocol == '11':  # UDP
+        elif protocol == '17':  # UDP
             parse_udp_packet(hex_data)
 
 
@@ -172,13 +172,17 @@ def capture_packets(interface, capture_filter, packet_count, timeout):
 
 
 def main():
+
     args = define_arguments()
 
     try:
         capture_packets(args.interface, args.filter, args.count, args.timeout)
+    except KeyboardInterrupt:
+        print("Packet capturing stopped by user (Keyboard Interrupt).")
     except Exception as e:
-        print(f"Error: {e}")
-        # capture_packets('et0', args.filter, args.count)
+        print(f"An error occurred: {e}")
+    finally:
+        print("Packet capturing has completed or timed out.")
 
 
 if __name__ == '__main__':
