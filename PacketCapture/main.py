@@ -198,7 +198,8 @@ def packet_callback(packet):
 
 # Capture packets on a specified interface using a custom filter
 def capture_packets(interface, capture_filter, packet_count, timeout):
-    print(f"Packet capture on {interface} with filter: {capture_filter} ")
+    print(f"Packet capture on {interface} with filter: '{capture_filter}' \nCount of {packet_count} and Timeout of"
+          f" {timeout}(s)")
     sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count, timeout=timeout)
 
 
