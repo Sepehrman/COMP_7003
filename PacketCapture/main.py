@@ -26,8 +26,12 @@ def define_arguments():
     return args
 
 
-# Function to parse the Ethernet header
-def parse_ethernet_header(hex_data):
+def  parse_ethernet_header(hex_data):
+    """
+    Extracts Ethernet header from the packet Byte data
+    :param hex_data: string representing the packet byte data
+    :return: a String representing Ether Type
+    """
     # Ethernet header is the first 14 bytes (28 hex characters)
     dest_mac = hex_data[0:12]
     source_mac = hex_data[12:24]
@@ -44,8 +48,12 @@ def parse_ethernet_header(hex_data):
     return ether_type
 
 
-# Function to parse ARP packet
 def parse_arp_packet(hex_data):
+    """
+    Function responsible for parsing ARP packets
+    :param hex_data: string representing the packet byte data
+    """
+
     # ARP packet fields in hex
     hw_type = hex_data[28:32]
     proto_type = hex_data[32:36]
@@ -75,8 +83,11 @@ def parse_arp_packet(hex_data):
           f"  Target IP: {dst_ip_readable}")
 
 
-# Function to parse IPv4 packet
 def parse_ipv4_packet(hex_data):
+    """
+    Function responsible for parsing IPv4 packets
+    :param hex_data: string representing the packet byte data
+    """
     version_ihl = hex_data[28:30]
     version = version_ihl[0]
     ihl = version_ihl[1]
@@ -106,7 +117,12 @@ def parse_ipv4_packet(hex_data):
           f"  Source IP: {src_ip}\n"
           f"  Destination IP: {dst_ip}")
 
+
 def parse_ipv6_packet(hex_data):
+    """
+    Function responsible for parsing IPv6 packets
+    :param hex_data: string representing the packet byte data
+    """
     version_traffic_class = hex_data[28:30]
     version = version_traffic_class[0]
     traffic_class = version_traffic_class[1:2]
@@ -131,8 +147,11 @@ def parse_ipv6_packet(hex_data):
           f"  Destination IP: {dst_ip}")
 
 
-# Function to parse TCP packet
 def parse_tcp_packet(hex_data):
+    """
+    Function responsible for parsing TCP packets
+    :param hex_data: string representing the packet byte data
+    """
     src_port = hex_data[68:72]
     dst_port = hex_data[72:76]
     seq_num = hex_data[76:84]
@@ -169,15 +188,20 @@ def parse_udp_packet(hex_data):
           f"  Checksum: {checksum} (Dec: {int(checksum, 16)})")
 
 
-# Function to handle each captured packet
 def packet_callback(packet):
+    """
+    Function responsible for handling each captured packet
+    :param packet: a Packet object
+    """
     # Convert the raw packet to hex format
     raw_data = bytes(packet)
     hex_data = raw_data.hex()
 
     # Process the Ethernet header
     print(f"\nCaptured Packet (Hex): {hex_data}")
+
     ether_type = parse_ethernet_header(hex_data)
+
     if ether_type == '0806':  # ARP
         parse_arp_packet(hex_data)
     elif ether_type == '0800':  # IPv4
@@ -196,8 +220,14 @@ def packet_callback(packet):
             parse_udp_packet(hex_data)
 
 
-# Capture packets on a specified interface using a custom filter
 def capture_packets(interface, capture_filter, packet_count, timeout):
+    """
+    Capture packets on user-defined BPF filters
+    :param interface: network interface we plan to use
+    :param capture_filter: Defines the filter on specific packets
+    :param packet_count: Max number of packets to be captures
+    :param timeout: Timeout before program stops capturing packets
+    """
     print(f"Packet capture on {interface} with filter: '{capture_filter}' \nCount of {packet_count} and Timeout of"
           f" {timeout}(s)")
     sniff(iface=interface, filter=capture_filter, prn=packet_callback, count=packet_count, timeout=timeout)
