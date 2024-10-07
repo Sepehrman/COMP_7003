@@ -15,8 +15,8 @@ def define_arguments():
                                                           'capturing process. By default, it will accept any '
                                                           'incoming traffic.', default='')
     parser.add_argument('-t', "--timeout", type=int, help='Timeout (seconds) for the duration the packet capturing process '
-                                                       'will continue before automatically stopping. Defaults to 10.'
-                                                                                                        , default=10)
+                                                       'will continue before automatically stopping. Defaults to 20.'
+                                                                                                        , default=20)
     parser.add_argument('-i', "--interface", type=str, help='Used to monitor a specific network interface. Can be either'
                                                             ' of Ethernet or Wi-Fi.\n'
                                              'The naming for Ethernet may vary based on your Operating System --> \n'
